@@ -1,0 +1,55 @@
+class /*$CLASSNAME*/ {
+public:
+   /**
+    * Default constructor
+    * This can be made private if necessary.
+    */
+    /*$CLASSNAME*/() {
+        
+    }
+    
+   /**
+    * Copy constructor
+    */
+    /*$CLASSNAME*/(const /*$CLASSNAME*/& other) {
+        
+    }
+    
+   /**
+    * Move constructor
+    */
+    /*$CLASSNAME*/(const /*$CLASSNAME*/& other)
+    : /*$CLASSNAME*/() // initialize via default constructor
+    {
+        swap(*this, other);
+    }
+    
+   /**
+    * Destructor
+    */
+    virtual ~/*$CLASSNAME*/() {
+        
+    }
+    
+   /**
+    * Copy assignment operator
+    */
+    virtual /*$CLASSNAME*/& operator=(/*$CLASSNAME*/ other) {
+        swap(*this, other);
+        return *this;
+    }
+    
+   /**
+    * Member swap
+    */
+    friend virtual void swap(/*$CLASSNAME*/& lhs, /*$CLASSNAME*/& rhs) {
+        // enable ADL
+        using std::swap;
+        
+        // member-by-member swap
+        
+    }
+    
+private:
+    
+}
