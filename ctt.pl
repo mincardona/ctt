@@ -8,7 +8,7 @@ use Getopt::Std;
 # Then, get key data.
 # Then, process file data and write to output files.
 
-# $lurp file
+# slurp the file
 sub slrp {
     my $fname = shift @_;
     open(my $FILE, "<$fname") or return "";
@@ -43,12 +43,12 @@ if (@ARGV < 3) {
     exit;
 }
 
-# read name for input and output files
+# read names of input and output files
 for my $arg (@ARGV) {
     if (not $output_flag_seen) {
         if ($arg eq "-o") {
             $output_flag_seen = 1;
-        # - as an input file name signifies stdin
+        # an input file name of "-" signifies stdin
         } elsif ($arg eq "-") {
             push @infiles, "/dev/stdin";
         } else {
@@ -56,7 +56,7 @@ for my $arg (@ARGV) {
             push @infiles, $arg;
         }
     } else {
-        # - as an output file name signifies stdout
+        # an output file name of "-" signifies stdout
         if ($arg eq "-") {
             push @outfiles, "/dev/stdout";
         } else {
@@ -80,26 +80,38 @@ open(my $KEYFILE, "<$keyfile_name") or die "[ERR]  Couldn't open keyfile: $keyfi
 my @lines = <$KEYFILE>;
 close($KEYFILE);
 
+# hash of keyword->replacement substitutions
 my %subs = ();
+# track line number
 my $line_n = 0;
 
 # read in all key/value pairs from keyfile
 for my $line (@lines) {
+
     $line_n++;
+    
+    # remove trailing newline
     chomp $line;
+    
     # skip line comments
     if (substr($line, 0, 1) eq "#" or length($line) == 0) {
         next;
     }
+    
     # TODO: keywords must be prefixed with /*$
     # get index of first = character
     $line =~ m/=/;
     my $splitpoint = $-[0];
     $splitpoint >= 0 or die "[ERR]  No = present in keyfile on line $line_n";
+    
+    # extract keyword
     my $keyword = substr $line, 0, $splitpoint;
     length($keyword) > 0 or die "[ERR]  Empty keyword in keyfile on line $line_n";
+    
+    # extract replacement text
     my $replace_with = substr $line, $splitpoint+1;
     $subs{$keyword} = $replace_with;
+    
 }
 
 print "performing replacements...\n" if $opts{'v'};
